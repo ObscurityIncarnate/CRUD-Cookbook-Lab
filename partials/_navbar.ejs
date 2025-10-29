@@ -1,0 +1,13 @@
+<nav>
+    <a href="/recipe">Recipes</a>
+    
+    <a href="/ingredients">Ingredients</a>
+    <% if(user){ %>
+    <a href="/recipe/new">New Recipe</a>
+    <a href="/ingrediients/new">New Ingredient</a>
+    <a href="">Sign out</a>
+    <% } else{%>
+    <a href="/auth/sign-in">Sign In</a>
+    <a href="/auth/sign-up">Sign Up</a>
+    <% } %>
+</nav>
