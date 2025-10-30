@@ -1,6 +1,6 @@
 const isSignedOut =  (req, res, next)=>{
     if(req.session.user){
-        res.render("/")
+        return res.redirect("/")
     }
     next();
 }

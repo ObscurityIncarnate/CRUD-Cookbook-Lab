@@ -7,5 +7,5 @@ const user =  new mongoose.Schema({
     password: {type: String, required: true}
 })
 
-const USER =  mongoose.model("user", user);
+const USER =  mongoose.model("User", user);
 export default USER;

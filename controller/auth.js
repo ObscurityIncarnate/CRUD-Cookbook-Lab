@@ -8,14 +8,14 @@ const router = express.Router();
 router.get("/sign-in",isSignedOut, async (req, res)=>{
     res.render("auth/sign-in");
 });
-router.post("/sign-in",async (req, res)=>{
+router.post("/sign-in",isSignedOut, async (req, res)=>{
     
     try {
-        const username = req.body.username
+        const username = req.body.username;
         console.log(req.body)
         const user = await users.findOne({username: username});
-        if(!user) res.status(401).send("Invalid Username");
-        if(!bcrypt.compareSync(user.password, req.body.password))res.status(401).send("Invalid Password");
+        if(!user){ return res.status(401).send("Invalid Username");}
+        if(!bcrypt.compareSync(req.body.password,user.password )){return res.status(401).send("Invalid Password");}
 
         req.session.user = {
             _id: user._id,
@@ -36,21 +36,24 @@ router.post("/sign-up", async(req, res)=>{
     try {
         const email = req.body.email;
         const password =  req.body.password;
-        const username =  req.body.password;
-        if(await users.findOne({email: email})) res.status(409).send("Email has already been used");
-        if(await users.findOne({username: username})) res.status(409).send("Username is Already Taken");
-        if(password !== req.body["confirm-password"]) res.status(409).send("Passwords do not match");
+        const username =  req.body.username;
+        if(await users.findOne({email: email})){return res.status(409).send("Email has already been used");}
+        if(await users.findOne({username: username})){ return res.status(409).send("Username is Already Taken");}
+        if(password !== req.body["confirm-password"]){ return res.status(409).send("Passwords do not match");}
 
         req.body.password = await bcrypt.hash(password, 12);
         console.log(req.body)
-        users.create(req.body)
+        await users.create(req.body)
+        res.redirect("/")
         console.log("User created Successfully")
     } catch (error) {
-        req.status(400).send("Failed to create the account");
+        res.status(400).send("Failed to create the account");
     }
 });
 
-router.post("/sign-out", isSignedIn, (req, res)=>{
-    res.redirect("/")
+router.get("/sign-out", isSignedIn, (req, res)=>{
+    req.session.destroy(()=>{
+        res.redirect("/")
+    })
 });
 export default router

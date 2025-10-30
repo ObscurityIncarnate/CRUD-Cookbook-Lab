@@ -5,6 +5,8 @@ import morgan from "morgan";
 import "dotenv/config"
 import MongoStore from "connect-mongo";
 import authrouter from "./controller/auth.js";
+import reciperouter from "./controller/recipes.js";
+import ingredientrouter from "./controller/ingredients.js"
 import users from "./models/users.js";
 import passUserToRoutes from "./middleware/pass_user_to_view.js";
 const app = express();
@@ -33,11 +35,13 @@ const connect = ()=>{
         console.log("🚨Failed to connect to Database🚨");
     }
 }
-
+connect();
 app.get("/", (req, res)=>{
     res.render("index")
 })
 app.use("/auth", authrouter);
+app.use("/recipes", reciperouter);
+app.use("/ingredients",ingredientrouter);
 //server startup
 
 app.listen(3000,()=>{
